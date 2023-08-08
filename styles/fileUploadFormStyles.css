@@ -44,29 +44,3 @@
     background-color: #ccc;
     cursor: not-allowed;
 }
-
-.progress-bar-container {
-    height: 20px;
-    background-color: #eee;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    width: 0;
-    background-color: #007bff;
-    text-align: center;
-    line-height: 20px;
-    color: white;
-    font-weight: bold;
-}
-
-.feedback {
-    margin-top: 10px;
-}
-
-.feedback p {
-    font-size: 14px;
-    color: #333;
-}
