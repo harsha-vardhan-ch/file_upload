@@ -116,7 +116,6 @@ export default function Home() {
     
       <div>
         <FileUploadForm />
-        <h1>Check</h1>
       </div>
 
   )

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import AWS from "aws-sdk";
+import fileUploadFormStyles from "../styles/fileUploadFormStyles.css";
 
 const FileUploadForm = () => {
-
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [emailAddresses, setEmailAddresses] = useState("");
 
@@ -31,8 +31,8 @@ const FileUploadForm = () => {
 		// Read the file content using FileReader API
 		const reader = new FileReader();
 
-		reader.onload = async(event) => {
-      var uploadedUrl
+		reader.onload = async (event) => {
+			var uploadedUrl;
 			const fileContent = event.target.result;
 
 			// Upload file to S3
@@ -42,12 +42,12 @@ const FileUploadForm = () => {
 				region: "us-east-1",
 			});
 
-      // Upload data to DynamoDB
-      const dynamodb = new AWS.DynamoDB.DocumentClient({
-          accessKeyId: "AKIAVGOB6SXRK3PEH24N",
-          secretAccessKey: "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",
-          region: "us-east-1",
-      });
+			// Upload data to DynamoDB
+			const dynamodb = new AWS.DynamoDB.DocumentClient({
+				accessKeyId: "AKIAVGOB6SXRK3PEH24N",
+				secretAccessKey: "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",
+				region: "us-east-1",
+			});
 
 			const params = {
 				Bucket: "harsha001",
@@ -62,30 +62,28 @@ const FileUploadForm = () => {
 				} else {
 					uploadedUrl = data.Location;
 					console.log("File uploaded successfully:", uploadedUrl);
-          
+
 					sendEmails(uploadedUrl, emails);
 				}
 				// sendEmails(data.Location, emails);
 			});
 
-      //Upload metadata to dynamoDB
-      const dynamoDBParams = {
-        TableName: "vamhe_table",
-        Item: {
-          id: selectedFile.name, // Use a unique identifier for the DynamoDB item
-          filename: selectedFile.name,
-          size: selectedFile.size,
-          timestamp: new Date().toISOString(),
-          s3ObjectUrl: uploadedUrl,
-        },
-      };
+			//Upload metadata to dynamoDB
+			const dynamoDBParams = {
+				TableName: "vamhe_table",
+				Item: {
+					id: selectedFile.name, // Use a unique identifier for the DynamoDB item
+					filename: selectedFile.name,
+					size: selectedFile.size,
+					timestamp: new Date().toISOString(),
+					s3ObjectUrl: uploadedUrl,
+				},
+			};
 
-      await dynamodb.put(dynamoDBParams).promise();
+			await dynamodb.put(dynamoDBParams).promise();
 			console.log("File info stored in DynamoDB.");
 
-      
-      console.log("Emails sent successfully.");
-
+			console.log("Emails sent successfully.");
 		};
 
 		// Start reading the selected file as a data URL
@@ -112,7 +110,7 @@ const FileUploadForm = () => {
 					Data: subject,
 				},
 			},
-			Source: "sthonuku@uab.edu"
+			Source: "sthonuku@uab.edu",
 		};
 
 		return ses.sendEmail(params).promise();
@@ -132,21 +130,31 @@ const FileUploadForm = () => {
 	};
 
 	return (
-		<div>
+		<div class="upload-container">
 			<h1>File Upload to AWS S3</h1>
-			<input type="file" onChange={handleFileChange} />
-			<br />
-			<label htmlFor="emailInput">
-				Email Addresses (up to 5, comma-separated):
-			</label>
-			<input
-				type="text"
-				id="emailInput"
-				value={emailAddresses}
-				onChange={handleEmailChange}
-			/>
-			<br />
-			<button onClick={handleUpload}>Upload</button>
+			<div class="input-container">
+				<label for="fileInput">Select File:</label>
+				<input type="file" id="fileInput" onChange={handleFileChange} />
+			</div>
+			<div class="input-container">
+				<label for="emailInput">
+					Email Addresses (up to 5, comma-separated):
+				</label>
+				<input
+					type="text"
+					id="emailInput"
+					placeholder="example@example.com, another@example.com"
+					value={emailAddresses}
+					onChange={handleEmailChange}
+				/>
+			</div>
+			<button
+				class="upload-button"
+				onClick={handleUpload}
+				// disabled={!isFormValid}
+			>
+				Upload
+			</button>
 		</div>
 	);
 };
